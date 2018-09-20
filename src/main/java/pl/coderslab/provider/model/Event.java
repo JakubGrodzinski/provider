@@ -30,21 +30,25 @@ public class Event
 
     private Date end;
 
-    private Date update;
 
     private boolean finished;
 
-    public Event(Team team1, Team team2, int team1score, int team2score, Date beginning, Date end) {
+    public Event(Team team1, Team team2, Date beginning, Date end) {
         this.team1 = team1;
         this.team2 = team2;
-        this.team1score = team1score;
-        this.team2score = team2score;
+        this.team1score = 0;
+        this.team2score = 0;
         this.beginning = beginning;
         this.end = end;
         this.finished = false;
     }
 
-    public Event () {}
+    public Event ()
+    {
+        this.team1score = 0;
+        this.team2score = 0;
+        this.finished = false;
+    }
 
     public Long getId() {
         return id;
@@ -110,11 +114,5 @@ public class Event
         this.finished = finished;
     }
 
-    public Date getUpdate() {
-        return update;
-    }
 
-    public void setUpdate(Date update) {
-        this.update = update;
-    }
 }

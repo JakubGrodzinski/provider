@@ -10,6 +10,7 @@ import pl.coderslab.provider.model.League;
 import pl.coderslab.provider.model.Team;
 import pl.coderslab.provider.service.DataService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -40,5 +41,17 @@ public class DataController
     public List<Event> getEvents ()
     {
         return dataService.getAllEvents();
+    }
+
+    @RequestMapping("/ongoing")
+    public List<Event> getOngoingEvents ()
+    {
+        return dataService.getOngoingEvents();
+    }
+
+    @RequestMapping("/finished")
+    public List<Event> getFinished()
+    {
+        return dataService.getFinishedEvents();
     }
 }

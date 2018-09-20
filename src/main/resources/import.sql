@@ -47,7 +47,7 @@ insert into teams values (38, 65, 64, 'Holstein Kiel', 4);
 insert into teams values (39, 63, 68, 'Bielefeld', 4);
 insert into teams values (40, 63, 66, 'Dynamo Dresden', 4);
 
-insert into events values (1, '2018-09-11 11:35:00', '2018-09-11 13:25:00', 0,2, 3, 1, 2);
-insert into events values (2, '2018-09-11 11:35:00', '2018-09-11 13:25:00', 0,2, 0, 3, 4);
+insert into events values (1, '2018-09-11 11:35:00', '2018-09-11 13:25:00', 1,2, 3, 1, 2);
+insert into events values (2, '2018-09-11 11:35:00', '2018-09-11 13:25:00', 1,2, 0, 3, 4);
 
 

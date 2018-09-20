@@ -12,6 +12,8 @@ import pl.coderslab.provider.repository.EventRepository;
 import pl.coderslab.provider.repository.LeagueRepository;
 import pl.coderslab.provider.repository.TeamRepository;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 @Service
 public class DataService
@@ -45,5 +47,20 @@ public class DataService
     public List<Event> getAllEvents()
     {
         return eventRepository.findAll();
+    }
+    @Scheduled(fixedRate = 5000)
+    public List<Event> getOngoingEvents ()
+    {
+        return eventRepository.findAllByBeginningBeforeAndFinished(new Date(), false);
+    }
+
+    @Scheduled(fixedRate = 5000)
+    public List<Event> getFinishedEvents ()
+    {
+        Date now = new Date();
+        Calendar date = Calendar.getInstance();
+        long t = date.getTimeInMillis();
+        Date beforeFiveMinutes = new Date(t - 300000);
+        return eventRepository.findAllByEndBetween(now, beforeFiveMinutes);
     }
 }

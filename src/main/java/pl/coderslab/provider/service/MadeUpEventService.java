@@ -2,15 +2,19 @@ package pl.coderslab.provider.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import pl.coderslab.provider.model.Event;
 import pl.coderslab.provider.model.League;
 import pl.coderslab.provider.model.Team;
 import pl.coderslab.provider.repository.EventRepository;
+import pl.coderslab.provider.repository.LeagueRepository;
 import pl.coderslab.provider.repository.TeamRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class MadeUpEventService
@@ -20,6 +24,9 @@ public class MadeUpEventService
 
     @Autowired
     EventRepository eventRepository;
+
+    @Autowired
+    LeagueRepository leagueRepository;
 
     public Set<Event> pairTeams (League league)
     {
@@ -50,12 +57,9 @@ public class MadeUpEventService
         Team defendingTeam;
         int attack1 = team1.getAttackPotential();
         int attack2 = team2.getAttackPotential();
-        Calendar date = Calendar.getInstance();
-        long t = date.getTimeInMillis();
-        Date afterAHalf = new Date(t + 3 * 60000);
-        Date beginning = date.getTime();
-        Date counterDate = beginning;
-        while (!counterDate.equals(afterAHalf))
+        LocalDateTime counterDate = LocalDateTime.now();
+        while ( counterDate.isAfter(  event.getBeginning().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime() ) &&
+                counterDate.isBefore( event.getEnd().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime() ) )
         {
             int whoAttacks = new Random().nextInt(attack1 + attack2);
             if(whoAttacks < attack1)
@@ -84,7 +88,6 @@ public class MadeUpEventService
                     {
                         event.setTeam2score(event.getTeam2score() + 1);
                     }
-                    event.setUpdate(new Date());
                     eventRepository.save(event);
                 }
             }
@@ -97,11 +100,44 @@ public class MadeUpEventService
                 e.printStackTrace();
             }
             // sprawa daty
-            Calendar dateAfterAction = Calendar.getInstance();
-            long s = dateAfterAction.getTimeInMillis();
-            counterDate = new Date(s);
+//            counterDate = new Date();
+            counterDate = LocalDateTime.now();
+        }
+        event.setFinished(true);
+        eventRepository.save(event);
+
+    }
+
+    public void setTimesEvents(Set<Event> events)
+    {
+        Iterator<Event> iterator = events.iterator();
+        while (iterator.hasNext())
+        {
+            Event event = iterator.next();
+            Date beginning = new Date();
+            Calendar date = Calendar.getInstance();
+            long t = date.getTimeInMillis();
+            Date end = new Date(t + 10000);
+            event.setBeginning(beginning);
+            event.setEnd(end);
         }
     }
 
+    @Scheduled(fixedRate = 10000)
+    public void playSeries ()
+    {
+        List<League> leagues = leagueRepository.findAll();
+        League league = leagues.get(new Random().nextInt(4));
+        Set<Event> events = pairTeams(league);
+        setTimesEvents(events);
+        for (Event event: events)
+        {
+            eventRepository.save(event);
+        }
+        for (Event event: events)
+        {
+            sampleMatch(event);
+        }
+    }
 
 }
